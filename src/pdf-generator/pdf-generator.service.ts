@@ -1,12 +1,17 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import puppeteer, { Browser } from 'puppeteer';
 import * as React from 'react';
+import { ZodError } from 'zod';
 
 import { renderHtml } from './pdf/render-html';
-import {
-  FirstPdfTemplate,
-  FirstPdfTemplateProps,
-} from './pdf/templates/first-pdf-template';
+import { TEMPLATES } from './pdf/templates';
+import { PdfTemplate } from './types/pdf-template.types';
 
 @Injectable()
 export class PdfGeneratorService implements OnModuleInit, OnModuleDestroy {
@@ -29,20 +34,44 @@ export class PdfGeneratorService implements OnModuleInit, OnModuleDestroy {
     return this.browser;
   }
 
-  async generatePdf(data: FirstPdfTemplateProps): Promise<Uint8Array> {
+  public validateSelectedTemplateName(name?: string) {
+    if (!name) {
+      throw new BadRequestException('Template name is required');
+    }
+
+    if (!(name in TEMPLATES)) {
+      throw new NotFoundException(`Unknown template '${name}'`);
+    }
+  }
+
+  public async generatePdf<TProps extends object>(
+    template: PdfTemplate<TProps>,
+    data: unknown,
+  ): Promise<Uint8Array> {
+    let props: TProps;
+
+    try {
+      props = template.schema.parse(data);
+    } catch (e) {
+      if (e instanceof ZodError) {
+        throw new BadRequestException(
+          e.issues.map((i) => ({
+            path: i.path.join('.'),
+            code: i.code,
+            message: i.message,
+          })),
+        );
+      }
+      throw e;
+    }
+
     const browser = await this.getBrowser();
     const page = await browser.newPage();
 
-    const html = renderHtml(React.createElement(FirstPdfTemplate, data), {
-      title: `${data.name} – Lebenslauf`,
-    });
+    const html = renderHtml(React.createElement(template.component, props));
 
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
-
-    // ensure webfonts/tailwind is ready (cdn script applies styles synchronously after load)
     await page.evaluate(() => document.fonts?.ready);
-
-    // screen media gives you Tailwind screen styles; print media also works if you add print-specific rules
     await page.emulateMediaType('screen');
 
     const pdf = await page.pdf({

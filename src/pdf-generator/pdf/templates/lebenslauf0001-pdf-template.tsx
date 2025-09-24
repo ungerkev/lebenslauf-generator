@@ -1,15 +1,26 @@
 import * as React from 'react';
+import { z } from 'zod';
 
-export type FirstPdfTemplateProps = {
-  name: string;
-  title: string;
-  email: string;
-  location: string;
-  summary: string;
-  skills: string[];
+const lebenslauf0001Schema = z
+  .object({
+    name: z.string().min(1),
+    title: z.string().optional(),
+    email: z.string().email(),
+    location: z.string().optional(),
+    summary: z.string().optional(),
+    skills: z.array(z.string()).default([]),
+  })
+  .strict();
+
+type Props = z.infer<typeof lebenslauf0001Schema>;
+
+export const Lebenslauf0001Template = {
+  name: 'first',
+  component: Lebenslauf0001PdfTemplate as React.ComponentType<Props>,
+  schema: lebenslauf0001Schema,
 };
 
-export function FirstPdfTemplate(props: FirstPdfTemplateProps) {
+export function Lebenslauf0001PdfTemplate(props: Props) {
   const { name, title, email, location, summary, skills } = props;
 
   return (

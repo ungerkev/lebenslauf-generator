@@ -1,24 +1,25 @@
-import { Body, Controller, Header, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Body, Controller, Param, Post, StreamableFile } from '@nestjs/common';
 
 import { PdfGeneratorService } from './pdf-generator.service';
-import type { FirstPdfTemplateProps } from './pdf/templates/first-pdf-template';
+import { TEMPLATES } from './pdf/templates';
+import type { TemplateName } from './types/pdf-template.types';
 
 @Controller('pdf-generator')
 export class PdfGeneratorController {
-  constructor(private readonly pdf: PdfGeneratorService) {}
+  constructor(private readonly pdfGeneratorService: PdfGeneratorService) {}
 
-  @Post('generate')
-  @Header('Content-Type', 'application/pdf')
-  async generate(@Body() body: FirstPdfTemplateProps, @Res() res: Response) {
-    const pdfBuffer = await this.pdf.generatePdf(body);
+  @Post('generate/:template')
+  async generate(
+    @Param('template') templateName: TemplateName,
+    @Body() body: unknown,
+  ) {
+    this.pdfGeneratorService.validateSelectedTemplateName(templateName);
+    const template = TEMPLATES[templateName];
+    const bytes = await this.pdfGeneratorService.generatePdf(template, body);
 
-    // inline = show in browser, attachment = force download
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="lebenslauf_generated.pdf"`,
-    );
-
-    res.send(pdfBuffer);
+    return new StreamableFile(Buffer.from(bytes), {
+      type: 'application/pdf',
+      disposition: `attachment; filename="lebenslauf_generated.pdf"`,
+    });
   }
 }
