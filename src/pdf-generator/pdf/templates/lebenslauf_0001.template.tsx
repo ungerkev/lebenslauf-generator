@@ -16,11 +16,11 @@ type Props = z.infer<typeof lebenslauf0001Schema>;
 
 export const Lebenslauf0001Template = {
   name: 'first',
-  component: Lebenslauf0001PdfTemplate as React.ComponentType<Props>,
+  component: Lebenslauf_0001Template as React.ComponentType<Props>,
   schema: lebenslauf0001Schema,
 };
 
-export function Lebenslauf0001PdfTemplate(props: Props) {
+export function Lebenslauf_0001Template(props: Props) {
   const { name, title, email, location, summary, skills } = props;
 
   return (

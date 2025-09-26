@@ -5,6 +5,8 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import puppeteer, { Browser } from 'puppeteer';
 import * as React from 'react';
 import { ZodError } from 'zod';
@@ -83,5 +85,21 @@ export class PdfGeneratorService implements OnModuleInit, OnModuleDestroy {
 
     await page.close();
     return pdf;
+  }
+
+  public getTemplateComponent(templateName: string) {
+    const filePath = join(
+      process.cwd(),
+      'src/pdf-generator/pdf/templates',
+      `${templateName}.template.tsx`,
+    );
+
+    if (!existsSync(filePath)) {
+      throw new NotFoundException(
+        `Component file with template '${templateName}' not found`,
+      );
+    }
+
+    return readFileSync(filePath, 'utf8');
   }
 }

@@ -1,4 +1,13 @@
-import { Body, Controller, Param, Post, StreamableFile } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  StreamableFile,
+} from '@nestjs/common';
+import type { Response } from 'express';
 
 import { PdfGeneratorService } from './pdf-generator.service';
 import { TEMPLATES } from './pdf/templates';
@@ -21,5 +30,19 @@ export class PdfGeneratorController {
       type: 'application/pdf',
       disposition: `attachment; filename="lebenslauf_generated.pdf"`,
     });
+  }
+
+  @Get('preview/:template')
+  serveInvoice(
+    @Param('template') templateName: TemplateName,
+    @Res() res: Response,
+  ) {
+    this.pdfGeneratorService.validateSelectedTemplateName(templateName);
+
+    const component =
+      this.pdfGeneratorService.getTemplateComponent(templateName);
+
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    return res.send(component);
   }
 }
