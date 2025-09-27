@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { z } from 'zod';
 
+import { PdfTemplate } from '../../types/pdf-template.types';
+
 const lebenslauf0002Schema = z
   .object({
     name: z.string().min(1),
@@ -14,8 +16,7 @@ const lebenslauf0002Schema = z
 
 type Props = z.infer<typeof lebenslauf0002Schema>;
 
-export const Lebenslauf0002Template = {
-  name: 'first',
+export const Lebenslauf0002Template: PdfTemplate = {
   component: Lebenslauf0001PdfTemplate as React.ComponentType<Props>,
   schema: lebenslauf0002Schema,
 };

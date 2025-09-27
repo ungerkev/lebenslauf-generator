@@ -1,28 +1,38 @@
 import * as React from 'react';
 import { z } from 'zod';
 
+import { PdfTemplate } from '../../types/pdf-template.types';
+
 const lebenslauf0001Schema = z
   .object({
     name: z.string().min(1),
     title: z.string().optional(),
-    email: z.string().email(),
+    email: z.email(),
     location: z.string().optional(),
     summary: z.string().optional(),
     skills: z.array(z.string()).default([]),
   })
   .strict();
 
-type Props = z.infer<typeof lebenslauf0001Schema>;
+type Lebenslauf0001TemplateProps = z.infer<typeof lebenslauf0001Schema>;
 
-export const Lebenslauf0001Template = {
-  name: 'first',
-  component: Lebenslauf_0001Template as React.ComponentType<Props>,
+export const Lebenslauf0001Template: PdfTemplate = {
+  component:
+    Lebenslauf_0001Template as React.ComponentType<Lebenslauf0001TemplateProps>,
   schema: lebenslauf0001Schema,
 };
 
-export function Lebenslauf_0001Template(props: Props) {
-  const { name, title, email, location, summary, skills } = props;
-
+/**
+ * Full Template
+ */
+export function Lebenslauf_0001Template({
+  name,
+  title,
+  email,
+  location,
+  summary,
+  skills,
+}: Lebenslauf0001TemplateProps) {
   return (
     <div className="min-h-screen bg-white antialiased px-[12mm] py-[14mm]">
       {/* header */}
@@ -36,7 +46,7 @@ export function Lebenslauf_0001Template(props: Props) {
 
       {/* summary */}
       <section className="mt-4">
-        <h2 className="text-xl font-semibold">Profil</h2>
+        <Headline>Profil</Headline>
         <p className="text-sm leading-6 mt-1">{summary}</p>
       </section>
 
@@ -51,6 +61,21 @@ export function Lebenslauf_0001Template(props: Props) {
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+/**
+ * Components
+ */
+type HeadlineProps = {
+  children: React.ReactNode;
+};
+
+function Headline({ children }: HeadlineProps) {
+  return (
+    <div className="px-4 py-1.5 bg-purple-100 rounded-sm">
+      <h2 className="text-xl font-semibold">{children}</h2>
     </div>
   );
 }
