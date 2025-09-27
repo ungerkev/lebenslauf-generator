@@ -2,8 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  OnModuleDestroy,
-  OnModuleInit,
 } from '@nestjs/common';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,18 +14,8 @@ import { TEMPLATES } from './pdf/templates';
 import { PdfTemplate } from './types/pdf-template.types';
 
 @Injectable()
-export class PdfGeneratorService implements OnModuleInit, OnModuleDestroy {
+export class PdfGeneratorService {
   private browser?: Browser;
-
-  async onModuleInit() {
-    await this.getBrowser();
-  }
-
-  async onModuleDestroy() {
-    if (this.browser) {
-      await this.browser.close().catch(() => void 0);
-    }
-  }
 
   private async getBrowser() {
     if (!this.browser) {

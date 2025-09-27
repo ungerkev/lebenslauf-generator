@@ -24,7 +24,7 @@ export function Lebenslauf_0001Template(props: Props) {
   const { name, title, email, location, summary, skills } = props;
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 antialiased px-[12mm] py-[14mm]">
+    <div className="min-h-screen bg-white antialiased px-[12mm] py-[14mm]">
       {/* header */}
       <header className="mb-4">
         <h1 className="text-3xl font-bold">{name}</h1>
