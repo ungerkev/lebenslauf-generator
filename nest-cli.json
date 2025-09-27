@@ -4,18 +4,5 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
-  },
-  "watchOptions": {
-    "paths": ["src"],
-    "ignored": [
-      "dist/**",
-      "**/*.d.ts",
-      "**/*.js",
-      "**/*.map",
-      "**/*.tsbuildinfo",
-      "node_modules/**",
-      ".turbo/**",
-      ".next/**"
-    ]
   }
 }

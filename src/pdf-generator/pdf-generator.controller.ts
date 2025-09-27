@@ -43,6 +43,7 @@ export class PdfGeneratorController {
       this.pdfGeneratorService.getTemplateComponent(templateName);
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+
     return res.send(component);
   }
 }
