@@ -1,8 +1,19 @@
+import parse from 'html-react-parser';
 import { Mail, Smartphone } from 'lucide-react';
 import * as React from 'react';
 import { z } from 'zod';
 
 import { PdfTemplate } from '../../types/pdf-template.types';
+
+const htmlString = z
+  .string()
+  .min(1, 'content required')
+  .refine((s) => !/<\s*script\b/i.test(s), 'script tags are not allowed');
+
+const sectionSchema = z.object({
+  headline: z.string().min(1, 'headline required'),
+  content: htmlString,
+});
 
 const lebenslauf0001Schema = z
   .object({
@@ -14,8 +25,8 @@ const lebenslauf0001Schema = z
     postalCode: z.string().optional(),
     city: z.string().optional(),
     country: z.string().optional(),
-    summary: z.string().optional(),
     skills: z.array(z.string()).default([]),
+    sections: z.array(sectionSchema).default([]),
   })
   .strict();
 
@@ -39,8 +50,8 @@ export function Lebenslauf_0001Template({
   postalCode,
   city,
   country,
-  summary,
   skills,
+  sections,
 }: Lebenslauf0001TemplateProps) {
   const textColor = 'rgb(20, 20, 22)';
 
@@ -67,10 +78,12 @@ export function Lebenslauf_0001Template({
       </header>
 
       {/* summary */}
-      <section className="mt-4">
-        <H3>Profil</H3>
-        <p className="text-sm leading-6 mt-1">{summary}</p>
-      </section>
+      {sections.map(({ headline, content }) => (
+        <section key={headline} className="mt-4">
+          <H3>{headline}</H3>
+          <p className="mt-1">{parse(content)}</p>
+        </section>
+      ))}
 
       {/* skills */}
       <section className="mt-4">
