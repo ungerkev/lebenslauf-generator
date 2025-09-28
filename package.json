@@ -23,6 +23,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "lucide-react": "^0.544.0",
     "nestjs-zod": "^5.0.1",
     "puppeteer": "^24.22.3",
     "react": "^19.1.1",

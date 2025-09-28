@@ -1,3 +1,4 @@
+import { Smartphone } from 'lucide-react';
 import * as React from 'react';
 import { z } from 'zod';
 
@@ -45,7 +46,6 @@ export function Lebenslauf_0001Template({
       <header className="mb-4">
         <H1>{name}</H1>
         <H2>{title}</H2>
-
         {street && <div className="text-sm text-zinc-600">{street}</div>}
         {postalCode && city && (
           <div className="text-sm text-zinc-600">
@@ -53,6 +53,9 @@ export function Lebenslauf_0001Template({
           </div>
         )}
         {country && <div className="text-sm text-zinc-600">{country}</div>}
+        <div className="flex items-center gap-1 ">
+          <Smartphone strokeWidth={1.5} size={16} /> +43 664 346 52 40
+        </div>
       </header>
 
       {/* summary */}
