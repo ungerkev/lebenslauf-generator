@@ -84,7 +84,7 @@ export function Lebenslauf_0001Template({
 
   return (
     <div
-      className="min-h-screen bg-white antialiased px-[12mm] py-[14mm] text-xs"
+      className="bg-white antialiased p-[25.4mm] text-[16px]"
       style={{ color: textColor }}
     >
       {/* header */}
@@ -110,9 +110,7 @@ export function Lebenslauf_0001Template({
           return (
             <section key={`custom-${i}`} className="mt-4 break-inside-avoid">
               <H3>{section.headline}</H3>
-              <div className="mt-1 text-sm leading-6">
-                {parse(section.content)}
-              </div>
+              <div className="mt-1 leading-6">{parse(section.content)}</div>
             </section>
           );
         }
@@ -123,7 +121,7 @@ export function Lebenslauf_0001Template({
             <div className="mt-2 space-y-2">
               {section.content.map((group, gi) => (
                 <div key={`group-${gi}`}>
-                  <h4 className="text-sm font-medium">{group.headline}</h4>
+                  <div>{group.headline}</div>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {group.badges.map((badge, bi) => (
                       <span
@@ -155,7 +153,7 @@ function H1({ children }: H1Props) {
   const textColor = 'rgb(57, 76, 134)';
 
   return (
-    <h1 className="text-xl mb-px" style={{ color: textColor }}>
+    <h1 className="text-[27px] mb-px" style={{ color: textColor }}>
       {children}
     </h1>
   );
@@ -169,7 +167,7 @@ function H2({ children }: H2Props) {
   const textColor = 'rgb(57, 76, 134)';
 
   return (
-    <h2 className="text-base mb-1.5" style={{ color: textColor }}>
+    <h2 className="text-[21px] mb-1.5" style={{ color: textColor }}>
       {children}
     </h2>
   );
@@ -184,7 +182,7 @@ function H3({ children }: H3Props) {
 
   return (
     <div className="text-center py-1.5 rounded-sm" style={{ backgroundColor }}>
-      <h3 className="text-sm">{children}</h3>
+      <h3 className="text-[19px]">{children}</h3>
     </div>
   );
 }
@@ -229,7 +227,7 @@ function Contact({ iconColor, email, phone }: ContactProps) {
     <div className="space-y-1">
       {email && (
         <div className="flex items-center gap-1.5">
-          <Mail strokeWidth={1.5} size={14} style={{ color: iconColor }} />
+          <Mail strokeWidth={1.5} size={16} style={{ color: iconColor }} />
           {email}
         </div>
       )}
@@ -238,7 +236,7 @@ function Contact({ iconColor, email, phone }: ContactProps) {
         <div className="flex items-center gap-1">
           <Smartphone
             strokeWidth={1.5}
-            size={14}
+            size={16}
             style={{ color: iconColor }}
           />
           {phone}
