@@ -10,10 +10,46 @@ const htmlString = z
   .min(1, 'content required')
   .refine((s) => !/<\s*script\b/i.test(s), 'script tags are not allowed');
 
-const sectionSchema = z.object({
-  headline: z.string().min(1, 'headline required'),
-  content: htmlString,
-});
+const skillGroupSchema = z
+  .object({
+    headline: z.string().min(1, 'headline required'),
+    badges: z.array(z.string().min(1)).min(1, 'at least one badge'),
+  })
+  .strict();
+
+/** Section variants */
+const customSectionSchema = z
+  .object({
+    type: z.literal('custom'),
+    headline: z.string().min(1, 'headline required'),
+    content: htmlString,
+  })
+  .strict();
+
+const skillsSectionSchema = z
+  .object({
+    type: z.literal('skills'),
+    headline: z.string().min(1, 'headline required'),
+    content: z.array(skillGroupSchema).min(1, 'at least one skills group'),
+  })
+  .strict();
+
+/**
+ * Accepts either:
+ *  - custom section (headline + HTML string), or
+ *  - skills section (array of groups)
+ *
+ * If `type` is missing, we default it to "custom" via preprocess.
+ */
+export const sectionSchema = z.preprocess(
+  (val) => {
+    if (val && typeof val === 'object' && !('type' in (val as any))) {
+      return { type: 'custom', ...(val as any) };
+    }
+    return val;
+  },
+  z.discriminatedUnion('type', [customSectionSchema, skillsSectionSchema]),
+);
 
 const lebenslauf0001Schema = z
   .object({
@@ -25,7 +61,6 @@ const lebenslauf0001Schema = z
     postalCode: z.string().optional(),
     city: z.string().optional(),
     country: z.string().optional(),
-    skills: z.array(z.string()).default([]),
     sections: z.array(sectionSchema).default([]),
   })
   .strict();
@@ -50,7 +85,6 @@ export function Lebenslauf_0001Template({
   postalCode,
   city,
   country,
-  skills,
   sections,
 }: Lebenslauf0001TemplateProps) {
   const textColor = 'rgb(20, 20, 22)';
@@ -78,24 +112,41 @@ export function Lebenslauf_0001Template({
       </header>
 
       {/* summary */}
-      {sections.map(({ headline, content }) => (
-        <section key={headline} className="mt-4">
-          <H3>{headline}</H3>
-          <p className="mt-1">{parse(content)}</p>
-        </section>
-      ))}
+      {sections.map((section, i) => {
+        if (section.type === 'custom') {
+          return (
+            <section key={`custom-${i}`} className="mt-4 break-inside-avoid">
+              <H3>{section.headline}</H3>
+              <div className="mt-1 text-sm leading-6">
+                {parse(section.content)}
+              </div>
+            </section>
+          );
+        }
 
-      {/* skills */}
-      <section className="mt-4">
-        <h2 className="text-xl font-semibold">Fähigkeiten</h2>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {skills.map((s, i) => (
-            <span key={i} className="text-sm px-2 py-1 rounded bg-zinc-100">
-              {s}
-            </span>
-          ))}
-        </div>
-      </section>
+        return (
+          <section key={`skills-${i}`} className="mt-4 break-inside-avoid">
+            <H3>{section.headline}</H3>
+            <div className="mt-2 space-y-2">
+              {section.content.map((group, gi) => (
+                <div key={`group-${gi}`}>
+                  <h4 className="text-sm font-medium">{group.headline}</h4>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {group.badges.map((badge, bi) => (
+                      <span
+                        key={`badge-${gi}-${bi}`}
+                        className="text-sm px-2 py-1 rounded bg-zinc-100"
+                      >
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
