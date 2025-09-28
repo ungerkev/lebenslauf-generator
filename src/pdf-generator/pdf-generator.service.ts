@@ -61,6 +61,7 @@ export class PdfGeneratorService {
     const html = renderHtml(React.createElement(template.component, props));
 
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.evaluateHandle('document.fonts.ready');
     await page.evaluate(() => document.fonts?.ready);
     await page.emulateMediaType('screen');
 

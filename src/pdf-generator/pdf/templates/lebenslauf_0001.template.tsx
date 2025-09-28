@@ -8,7 +8,10 @@ const lebenslauf0001Schema = z
     name: z.string().min(1),
     title: z.string().optional(),
     email: z.email(),
-    location: z.string().optional(),
+    street: z.string().optional(),
+    postalCode: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
     summary: z.string().optional(),
     skills: z.array(z.string()).default([]),
   })
@@ -29,24 +32,32 @@ export function Lebenslauf_0001Template({
   name,
   title,
   email,
-  location,
+  street,
+  postalCode,
+  city,
+  country,
   summary,
   skills,
 }: Lebenslauf0001TemplateProps) {
   return (
-    <div className="min-h-screen bg-white antialiased px-[12mm] py-[14mm]">
+    <div className="min-h-screen bg-white antialiased px-[12mm] py-[14mm] text-xs">
       {/* header */}
       <header className="mb-4">
-        <h1 className="text-3xl font-bold">{name}</h1>
-        <div className="text-sm text-zinc-600">{title}</div>
-        <div className="text-sm text-zinc-600">
-          {email} · {location}
-        </div>
+        <H1>{name}</H1>
+        <H2>{title}</H2>
+
+        {street && <div className="text-sm text-zinc-600">{street}</div>}
+        {postalCode && city && (
+          <div className="text-sm text-zinc-600">
+            {postalCode} {city}
+          </div>
+        )}
+        {country && <div className="text-sm text-zinc-600">{country}</div>}
       </header>
 
       {/* summary */}
       <section className="mt-4">
-        <Headline>Profil</Headline>
+        <H3>Profil</H3>
         <p className="text-sm leading-6 mt-1">{summary}</p>
       </section>
 
@@ -68,14 +79,48 @@ export function Lebenslauf_0001Template({
 /**
  * Components
  */
-type HeadlineProps = {
+type H1Props = {
   children: React.ReactNode;
 };
 
-function Headline({ children }: HeadlineProps) {
+function H1({ children }: H1Props) {
+  const textColor = 'rgb(57, 76, 134)';
+
   return (
-    <div className="px-4 py-1.5 bg-purple-100 rounded-sm">
-      <h2 className="text-xl font-semibold">{children}</h2>
+    <h1 className="text-xl mb-px" style={{ color: textColor }}>
+      {children}
+    </h1>
+  );
+}
+
+type H2Props = {
+  children: React.ReactNode;
+};
+
+function H2({ children }: H2Props) {
+  const textColor = 'rgb(57, 76, 134)';
+
+  return (
+    <h2 className="text-base mb-1.5" style={{ color: textColor }}>
+      {children}
+    </h2>
+  );
+}
+
+type H3Props = {
+  children: React.ReactNode;
+};
+
+function H3({ children }: H3Props) {
+  const textColor = 'rgb(20, 20, 22)';
+  const backgroundColor = 'rgb(220, 225, 241)';
+
+  return (
+    <div
+      className="text-center py-1.5 rounded-sm"
+      style={{ backgroundColor, color: textColor }}
+    >
+      <h3 className="text-sm">{children}</h3>
     </div>
   );
 }
