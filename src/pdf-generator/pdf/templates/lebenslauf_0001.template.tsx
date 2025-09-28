@@ -1,4 +1,4 @@
-import { Smartphone } from 'lucide-react';
+import { Mail, Smartphone } from 'lucide-react';
 import * as React from 'react';
 import { z } from 'zod';
 
@@ -8,7 +8,8 @@ const lebenslauf0001Schema = z
   .object({
     name: z.string().min(1),
     title: z.string().optional(),
-    email: z.email(),
+    email: z.email().optional(),
+    phone: z.string().optional(),
     street: z.string().optional(),
     postalCode: z.string().optional(),
     city: z.string().optional(),
@@ -33,6 +34,7 @@ export function Lebenslauf_0001Template({
   name,
   title,
   email,
+  phone,
   street,
   postalCode,
   city,
@@ -40,21 +42,27 @@ export function Lebenslauf_0001Template({
   summary,
   skills,
 }: Lebenslauf0001TemplateProps) {
+  const textColor = 'rgb(20, 20, 22)';
+
   return (
-    <div className="min-h-screen bg-white antialiased px-[12mm] py-[14mm] text-xs">
+    <div
+      className="min-h-screen bg-white antialiased px-[12mm] py-[14mm] text-xs"
+      style={{ color: textColor }}
+    >
       {/* header */}
       <header className="mb-4">
         <H1>{name}</H1>
         <H2>{title}</H2>
-        {street && <div className="text-sm text-zinc-600">{street}</div>}
-        {postalCode && city && (
-          <div className="text-sm text-zinc-600">
-            {postalCode} {city}
-          </div>
-        )}
-        {country && <div className="text-sm text-zinc-600">{country}</div>}
-        <div className="flex items-center gap-1 ">
-          <Smartphone strokeWidth={1.5} size={16} /> +43 664 346 52 40
+
+        <div className="space-y-2">
+          <Location
+            street={street}
+            postalCode={postalCode}
+            city={city}
+            country={country}
+          />
+
+          <Contact iconColor={textColor} email={email} phone={phone} />
         </div>
       </header>
 
@@ -115,15 +123,70 @@ type H3Props = {
 };
 
 function H3({ children }: H3Props) {
-  const textColor = 'rgb(20, 20, 22)';
   const backgroundColor = 'rgb(220, 225, 241)';
 
   return (
-    <div
-      className="text-center py-1.5 rounded-sm"
-      style={{ backgroundColor, color: textColor }}
-    >
+    <div className="text-center py-1.5 rounded-sm" style={{ backgroundColor }}>
       <h3 className="text-sm">{children}</h3>
+    </div>
+  );
+}
+
+type LocationProps = {
+  street?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
+};
+
+function Location({ street, postalCode, city, country }: LocationProps) {
+  if (!street && !postalCode && !city && !country) {
+    return null;
+  }
+
+  return (
+    <div>
+      {street && <div>{street}</div>}
+      {postalCode && city && (
+        <div>
+          {postalCode} {city}
+        </div>
+      )}
+      {country && <div>{country}</div>}
+    </div>
+  );
+}
+
+type ContactProps = {
+  iconColor: string;
+  email?: string;
+  phone?: string;
+};
+
+function Contact({ iconColor, email, phone }: ContactProps) {
+  if (!email && !phone) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-1">
+      {email && (
+        <div className="flex items-center gap-1.5">
+          <Mail strokeWidth={1.5} size={14} style={{ color: iconColor }} />
+          {email}
+        </div>
+      )}
+
+      {phone && (
+        <div className="flex items-center gap-1">
+          <Smartphone
+            strokeWidth={1.5}
+            size={14}
+            style={{ color: iconColor }}
+          />
+          {phone}
+        </div>
+      )}
     </div>
   );
 }
