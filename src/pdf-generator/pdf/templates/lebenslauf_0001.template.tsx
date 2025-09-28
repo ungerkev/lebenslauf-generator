@@ -34,17 +34,10 @@ const skillsSectionSchema = z
   })
   .strict();
 
-/**
- * Accepts either:
- *  - custom section (headline + HTML string), or
- *  - skills section (array of groups)
- *
- * If `type` is missing, we default it to "custom" via preprocess.
- */
 export const sectionSchema = z.preprocess(
   (val) => {
     if (val && typeof val === 'object' && !('type' in (val as any))) {
-      return { type: 'custom', ...(val as any) };
+      return { ...val, type: 'custom' as const };
     }
     return val;
   },
