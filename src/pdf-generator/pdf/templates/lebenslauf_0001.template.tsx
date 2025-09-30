@@ -181,8 +181,8 @@ function H3({ children }: H3Props) {
   const backgroundColor = 'rgb(220, 225, 241)';
 
   return (
-    <div className="text-center py-1.5 rounded-sm" style={{ backgroundColor }}>
-      <h3 className="text-[19px]">{children}</h3>
+    <div className="text-center py-0.5 rounded-sm" style={{ backgroundColor }}>
+      <h3 className="text-[18px]">{children}</h3>
     </div>
   );
 }
